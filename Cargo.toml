@@ -1,0 +1,12 @@
+[package]
+name = "rustify"
+version = "0.1.0"
+authors = ["André Ligné"]
+
+[lib]
+name = "rustify"
+path = "src/lib.rs"
+
+[dependencies]
+libc = "0.2.8"
+openal-rs = "0.1.1"
