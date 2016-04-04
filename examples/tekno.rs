@@ -4,6 +4,8 @@
 
 extern crate rustify;
 
+use std::sync::{Arc, Mutex};
+
 mod application_key;
 
 fn main() {
@@ -16,11 +18,10 @@ fn main() {
   let username = args[1].to_string();
   let password = args[2].to_string();
 
-  use std::sync::{Arc, Condvar, Mutex};
 
   // Use OpenAL for playback
   let openal_player = rustify::OpenALPlayer::new();
-  let mut player = Arc::new(Mutex::new(openal_player));
+  let player = Arc::new(Mutex::new(openal_player));
 
   let (mut session, receiver) = rustify::Session::new(
     application_key::get(),
