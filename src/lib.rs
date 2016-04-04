@@ -10,7 +10,14 @@ use std::sync::mpsc::{Sender, Receiver};
 use std::sync::mpsc;
 
 mod openal_player;
+mod link;
+mod track;
+mod playlist;
+
 pub use self::openal_player::OpenALPlayer;
+pub use self::link::Link;
+pub use self::track::Track;
+pub use self::playlist::Playlist;
 
 mod spotify;
 pub use spotify::MusicPlayer;
@@ -95,13 +102,13 @@ impl Session {
       return None;
     }
 
-    let playlist = unsafe { spotify::sp_playlistcontainer_playlist(container, index) };
-    return Some(Playlist { ptr: playlist });
+    let playlist_ptr = unsafe { spotify::sp_playlistcontainer_playlist(container, index) };
+    return Some(Playlist::new(playlist_ptr));
   }
 
   pub fn play_track(&self, track: &Track) -> bool {
     // sp_error sp_session_player_load(sp_session *session, sp_track *track)
-    unsafe { spotify::sp_session_player_load(self.session.0, track.ptr) };
+    unsafe { spotify::sp_session_player_load(self.session.0, track.ptr()) };
 
     // sp_error sp_session_player_play(sp_session *session, bool play)
     unsafe { spotify::sp_session_player_play(self.session.0, true) };
@@ -169,137 +176,6 @@ impl Session {
     return match std::ffi::CString::into_string(username) {
       Ok(name) => Some(name),
       Err(_) => None,
-    }
-  }
-}
-
-pub struct Playlist {
-  ptr: *const spotify::SpPlaylist,
-}
-
-impl Playlist {
-  fn new(container: *const spotify::SpPlaylistContainer, index: i32) -> Option<Playlist> {
-    let playlist_type = unsafe {
-      spotify::sp_playlistcontainer_playlist_type(container, index)
-    };
-
-    if playlist_type != spotify::SpPlaylistType::SP_PLAYLIST_TYPE_PLAYLIST {
-      return None;
-    }
-
-    let playlist: *const spotify::SpPlaylist =
-      unsafe { spotify::sp_playlistcontainer_playlist(container, index) };
-
-    loop {
-      if unsafe { spotify::sp_playlist_is_loaded(playlist) } { break; }
-      thread::sleep(Duration::from_millis(100));
-    }
-
-    return Some(Playlist {
-      ptr: playlist,
-    });
-  }
-
-  fn tracks(&self) -> Vec<Track> {
-    self.wait_until_loaded();
-
-    // Load all the playlists
-    let number_of_tracks = unsafe { spotify::sp_playlist_num_tracks(self.ptr) };
-    let mut tracks: Vec<Track> = Vec::new();
-    tracks.reserve(number_of_tracks as usize);
-
-    for i in 0..number_of_tracks {
-      let track = unsafe { spotify::sp_playlist_track(self.ptr, i) };
-      tracks.push(Track {
-        ptr: track,
-      });
-    }
-
-    return tracks;
-  }
-
-  pub fn name(&self) -> String {
-    self.wait_until_loaded();
-
-    let name = unsafe {
-      ffi::CString::from_raw(spotify::sp_playlist_name(self.ptr) as *mut i8)
-    };
-
-    return match ffi::CString::into_string(name) {
-      Ok(name) => name,
-      Err(_) => String::from("Loading..."),
-    }
-  }
-
-  pub fn track(&self, index: i32) -> Option<Track> {
-    self.wait_until_loaded();
-
-    let number_of_tracks = unsafe { spotify::sp_playlist_num_tracks(self.ptr) };
-    if index >= number_of_tracks {
-      return None;
-    }
-
-    let track = unsafe { spotify::sp_playlist_track(self.ptr, index) };
-    return Some(Track {
-      ptr: track,
-    });
-  }
-
-  fn wait_until_loaded(&self) {
-    loop {
-      if unsafe { spotify::sp_playlist_is_loaded(self.ptr) } { break; }
-      thread::sleep(Duration::from_millis(100));
-    }
-  }
-}
-
-pub struct Track {
-  ptr: *const spotify::SpTrack,
-}
-
-impl Track {
-  pub fn name(&self) -> String {
-    self.wait_until_loaded();
-
-    let name = unsafe {
-      ffi::CString::from_raw(spotify::sp_track_name(self.ptr) as *mut i8)
-    };
-
-    return match ffi::CString::into_string(name) {
-      Ok(name) => name,
-      Err(_) => String::from("Loading..."),
-    }
-  }
-
-  fn wait_until_loaded(&self) {
-    loop {
-      if unsafe { spotify::sp_track_is_loaded(self.ptr) } { break; }
-      thread::sleep(Duration::from_millis(100));
-    }
-  }
-}
-
-pub enum Link {
-  TrackLink(Track),
-  Invalid,
-}
-
-impl Link {
-  pub fn new(link: String) -> Link {
-    let link_ptr = unsafe { spotify::sp_link_create_from_string(link.as_ptr() as *const i8) };
-
-    if link_ptr.is_null() {
-      return Link::Invalid;
-    }
-
-    let link_type = unsafe { spotify::sp_link_type(link_ptr) };
-
-    match link_type {
-      spotify::SpLinkType::SP_LINKTYPE_TRACK => {
-        let track_ptr = unsafe { spotify::sp_link_as_track(link_ptr) };
-        return Link::TrackLink(Track { ptr: track_ptr });
-      },
-      _ => Link::Invalid,
     }
   }
 }
