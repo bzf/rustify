@@ -45,7 +45,7 @@ pub struct Session {
 }
 
 impl Session {
-  pub fn new(application_key: Vec<i8>,
+  pub fn new(application_key: Vec<u8>,
              cache_location: &str,
              settings_location: &str,
              user_agent: &str,
