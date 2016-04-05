@@ -28,10 +28,6 @@ impl OpenALPlayer {
   fn play(&self) {
     self.source.play();
   }
-
-  fn stop(&self) {
-    self.source.stop();
-  }
 }
 
 unsafe impl Send for OpenALPlayer { }

@@ -1,20 +1,21 @@
 extern crate libc;
 
-use spotify;
 use spotify::types;
 
 #[derive(Debug)]
+#[allow(dead_code)]
+#[repr(C)]
 pub enum SpLinkType {
-  SP_LINKTYPE_INVALID = 0,
-  SP_LINKTYPE_TRACK = 1,
-  SP_LINKTYPE_ALBUM = 2,
-  SP_LINKTYPE_ARTIST = 3,
-  SP_LINKTYPE_SEARCH = 4,
-  SP_LINKTYPE_PLAYLIST = 5,
-  SP_LINKTYPE_PROFILE = 6,
-  SP_LINKTYPE_STARRED = 7,
-  SP_LINKTYPE_LOCALTRACK = 8,
-  SP_LINKTYPE_IMAGE = 9,
+  SpLinktypeInvalid = 0,
+  SpLinktypeTrack = 1,
+  SpLinktypeAlbum = 2,
+  SpLinktypeArtist = 3,
+  SpLinktypeSearch = 4,
+  SpLinktypePlaylist = 5,
+  SpLinktypeProfile = 6,
+  SpLinktypeStarred = 7,
+  SpLinktypeLocaltrack = 8,
+  SpLinktypeImage = 9,
 }
 
 pub enum SpLink { }
@@ -26,10 +27,4 @@ extern {
   pub fn sp_link_type(link: *const SpLink) -> SpLinkType;
 
   pub fn sp_link_as_track(link: *const SpLink) -> *const types::SpTrack;
-
-  pub fn sp_link_as_album(link: *const SpLink) -> *const types::SpAlbum;
-
-  pub fn sp_link_as_artist(link: *const SpLink) -> *const types::SpArtist;
-
-  pub fn sp_link_relase(link: *const SpLink) -> types::SpError;
 }

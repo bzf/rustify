@@ -1,3 +1,5 @@
+#![deny(warnings)]
+
 extern crate libc;
 extern crate openal;
 
@@ -33,14 +35,13 @@ pub enum Event {
   EndOfTrack,
 }
 
-struct CallbackHelper {
-  player: Arc<Mutex<spotify::MusicPlayer>>,
-  sp_session_sender: Arc<Sender<spotify::SpSessionCallback>>,
-}
-
 pub struct Session {
+  #[allow(dead_code)]
   callbacks: spotify::SpSessionCallbacks,
+
   session: Arc<SessionPtr>,
+
+  #[allow(dead_code)]
   callback_helper: *const spotify::CallbackHelper,
 }
 
@@ -49,7 +50,7 @@ impl Session {
              cache_location: &str,
              settings_location: &str,
              user_agent: &str,
-             mut player: Arc<Mutex<MusicPlayer>>) -> (Session, Receiver<Event>) {
+             player: Arc<Mutex<MusicPlayer>>) -> (Session, Receiver<Event>) {
     let (sp_sender, sp_receiver): (Sender<spotify::SpSessionCallback>, Receiver<spotify::SpSessionCallback>) = mpsc::channel();
 
     let callbacks = spotify::SpSessionCallbacks::default();
@@ -73,7 +74,7 @@ impl Session {
 
     let session = unsafe {
       let mut session = std::ptr::null_mut() as *mut spotify::SpSession;
-      let error = spotify::sp_session_create(&config, &mut session);
+      spotify::sp_session_create(&config, &mut session);
       session
     } as *const spotify::SpSession;
 
@@ -167,15 +168,5 @@ impl Session {
     }
 
     return playlist_container;
-  }
-
-  fn username(&self) -> Option<String> {
-    let ptr = unsafe { spotify::sp_session_user_name(self.session.0) };
-    let username = unsafe { std::ffi::CString::from_raw(ptr as *mut i8) };
-
-    return match std::ffi::CString::into_string(username) {
-      Ok(name) => Some(name),
-      Err(_) => None,
-    }
   }
 }

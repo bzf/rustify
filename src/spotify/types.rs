@@ -18,26 +18,38 @@ pub enum SpPlaylistContainer { }
 pub enum SpPlaylist { }
 pub enum SpTrack { }
 pub enum SpAudioformat { }
+
+#[allow(dead_code)]
 pub enum SpArtist { }
+
+#[allow(dead_code)]
 pub enum SpAlbum { }
+
+#[allow(dead_code)]
 pub enum SpAlbumbrowse { }
+
+#[allow(dead_code)]
 pub enum SpAudioBufferFormat { }
 
 #[derive(Debug, PartialEq)]
+#[allow(dead_code)]
+#[repr(C)]
 pub enum SpPlaylistType {
-  SP_PLAYLIST_TYPE_PLAYLIST,
-  SP_PLAYLIST_TYPE_START_FOLDER,
-  SP_PLAYLIST_TYPE_END_FOLDER,
-  SP_PLAYLIST_TYPE_PLACEHOLDER,
+  SpPlaylistTypePlaylist,
+  SpPlaylistTypeStartFolder,
+  SpPlaylistTypeEndFolder,
+  SpPlaylistTypePlaceholder,
 }
 
 #[derive(Debug)]
+#[allow(dead_code)]
+#[repr(C)]
 pub enum SpConnectionState {
-  SP_CONNECTION_STATE_LOGGED_OUT,
-  SP_CONNECTION_STATE_LOGGED_IN,
-  SP_CONNECTION_STATE_DISCONNECTED,
-  SP_CONNECTION_STATE_UNDEFINED,
-  SP_CONNECTION_STATE_OFFLINE,
+  SpConnectionStateLoggedOut,
+  SpConnectionStateLoggedIn,
+  SpConnectionStateDisconnected,
+  SpConnectionStateUndefined,
+  SpConnectionStateOffline,
 }
 
 #[derive(Debug)]
@@ -46,11 +58,8 @@ pub enum SpSessionCallback {
   LoggedOut,
   MetadataUpdated,
   ConnectionError(SpError),
-  MessageToUser(String),
   NotifyMainThread,
-  MusicDelivery(Vec<i32>),
   PlayTokenLost,
-  LogMessage(String),
   EndOfTrack,
   StreamingError(SpError),
   UserinfoUpdated,
@@ -67,6 +76,7 @@ pub use spotify::callbacks::{SpSessionCallbacks};
 
 #[repr(C)]
 #[derive(Debug)]
+#[allow(dead_code)]
 pub enum SpError {
   SP_ERROR_OK,
   SP_ERROR_BAD_API_VERSION,
@@ -133,11 +143,11 @@ impl Default for SpSessionConfig {
   fn default() -> SpSessionConfig {
     SpSessionConfig {
       api_version: 12,
-      cache_location: ptr::null(), // REUQIREd
-      settings_location: ptr::null(), // REQUIRED
-      application_key: ptr::null(), // Set in `keys.h`
-      application_key_size: 0, // Set in `keys.h`
-      user_agent: ptr::null(), // REQUIRED
+      cache_location: ptr::null(),
+      settings_location: ptr::null(),
+      application_key: ptr::null(),
+      application_key_size: 0,
+      user_agent: ptr::null(),
 
       callbacks: ptr::null(),
       userdata: ptr::null(),

@@ -1,18 +1,14 @@
 extern crate libc;
 
-use std::ffi::{CString};
-use std::sync::mpsc::{Sender};
-use std::sync::{Arc, Mutex};
-
 use spotify::types::{SpSession, SpAudioBufferFormat, SpAudioformat, SpError, SpSessionCallback};
 use spotify;
 
 fn send_event(session: *mut SpSession, event: SpSessionCallback) {
   // Fetch the Sender from `sp_session_userdata` and send the OnLoggedIn
-  let mut userdata: *const spotify::CallbackHelper = unsafe { spotify::sp_session_userdata(session) as *const spotify::CallbackHelper };
-  let mut foo: &spotify::CallbackHelper = unsafe { &*userdata };
+  let userdata: *const spotify::CallbackHelper = unsafe { spotify::sp_session_userdata(session) as *const spotify::CallbackHelper };
+  let foo: &spotify::CallbackHelper = unsafe { &*userdata };
 
-  foo.sender.send(event);
+  foo.sender.send(event).unwrap();
 }
 
 extern fn on_logged_in(session: *mut SpSession,
@@ -33,8 +29,8 @@ extern fn on_connection_error(session: *mut SpSession,
   send_event(session, SpSessionCallback::ConnectionError(error));
 }
 
-extern fn on_message_to_user(session: *mut SpSession,
-                             message_ptr: *const libc::c_char) {
+extern fn on_message_to_user(_: *mut SpSession,
+                             _: *const libc::c_char) {
 }
 
 extern fn on_notify_main_thread(session: *mut SpSession) {
@@ -53,8 +49,8 @@ extern fn on_music_delivery(session: *mut SpSession,
     frames.push(frame);
   }
 
-  let mut userdata: *const spotify::CallbackHelper = unsafe { spotify::sp_session_userdata(session) as *const spotify::CallbackHelper };
-  let mut foo: &spotify::CallbackHelper = unsafe { &*userdata };
+  let userdata: *const spotify::CallbackHelper = unsafe { spotify::sp_session_userdata(session) as *const spotify::CallbackHelper };
+  let foo: &spotify::CallbackHelper = unsafe { &*userdata };
   return foo.player.lock().unwrap().handle_music_delivery(&frames);
 }
 
@@ -62,8 +58,8 @@ extern fn on_play_token_lost(session: *mut SpSession) {
   send_event(session, SpSessionCallback::PlayTokenLost);
 }
 
-extern fn on_log_message(session: *mut SpSession,
-                         message_ptr: *const libc::c_char) {
+extern fn on_log_message(_: *mut SpSession,
+                         _: *const libc::c_char) {
 }
 
 extern fn on_end_of_track(session: *mut SpSession) {

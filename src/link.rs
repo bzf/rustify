@@ -17,7 +17,7 @@ impl Link {
     let link_type = unsafe { spotify::sp_link_type(link_ptr) };
 
     match link_type {
-      spotify::SpLinkType::SP_LINKTYPE_TRACK => {
+      spotify::SpLinkType::SpLinktypeTrack => {
         let track_ptr = unsafe { spotify::sp_link_as_track(link_ptr) };
         return Link::TrackLink(Track::new(track_ptr));
       },

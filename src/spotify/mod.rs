@@ -6,7 +6,7 @@ mod links;
 
 pub use spotify::types::{CallbackHelper, MusicPlayer, SpSessionConfig, SpSession, SpError, SpAudioBufferFormat, SpAudioformat, SpSessionCallback, SpPlaylist, SpPlaylistContainer, SpTrack, SpPlaylistType, SpConnectionState, SpArtist, SpAlbum, SpAlbumbrowse};
 pub use spotify::callbacks::{SpSessionCallbacks};
-pub use spotify::links::{SpLink, SpLinkType, sp_link_create_from_string, sp_link_type, sp_link_as_track, sp_link_relase};
+pub use spotify::links::{SpLink, SpLinkType, sp_link_create_from_string, sp_link_type, sp_link_as_track};
 
 #[link(name = "spotify")]
 extern {
@@ -22,11 +22,7 @@ extern {
 
   pub fn sp_session_playlistcontainer(session: *const SpSession) -> *const SpPlaylistContainer;
 
-  pub fn sp_session_connectionstate(session: *const SpSession) -> SpConnectionState;
-
   pub fn sp_session_process_events(session: *const SpSession, next_timeout: &mut i32) -> SpError;
-
-  pub fn sp_session_user_name(session: *const SpSession) -> *const libc::c_char;
 
   pub fn sp_playlistcontainer_num_playlists(container: *const SpPlaylistContainer) -> i32;
 
@@ -49,9 +45,6 @@ extern {
 
   pub fn sp_session_player_play(session: *const SpSession,
                                 play: bool) -> SpError;
-
-  pub fn sp_playlistcontainer_playlist_type(container: *const SpPlaylistContainer,
-                                            index: i32) -> SpPlaylistType;
 
   pub fn sp_playlist_num_tracks(playlist: *const SpPlaylist) -> i32;
 
