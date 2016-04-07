@@ -11,12 +11,12 @@ use std::ffi;
 use std::sync::mpsc::{Sender, Receiver};
 use std::sync::mpsc;
 
-mod openal_player;
+mod player;
 mod link;
 mod track;
 mod playlist;
 
-pub use self::openal_player::OpenALPlayer;
+pub use self::player::{OpenALPlayer};
 pub use self::link::Link;
 pub use self::track::Track;
 pub use self::playlist::Playlist;
