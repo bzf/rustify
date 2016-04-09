@@ -6,6 +6,8 @@ use std::ptr;
 
 pub trait MusicPlayer: Sync + Send {
   fn handle_music_delivery(&mut self, &Vec<i32>) -> i32;
+
+  fn reset(&mut self);
 }
 
 pub struct CallbackHelper {

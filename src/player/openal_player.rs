@@ -35,7 +35,7 @@ unsafe impl Sync for OpenALPlayer { }
 
 impl spotify::MusicPlayer for OpenALPlayer {
   fn handle_music_delivery(&mut self, frames: &Vec<i32>) -> i32 {
-    if self.source.get_buffers_queued() - self.source.get_buffers_processed() > 100 {
+    if self.source.get_buffers_queued() - self.source.get_buffers_processed() > 10 {
       return 0;
     }
 
@@ -61,5 +61,9 @@ impl spotify::MusicPlayer for OpenALPlayer {
 
     return (frames.len() * 2) as i32;
   }
-}
 
+  fn reset(&mut self) {
+    self.source = al::Source::gen();
+    self.buffers = Vec::new();
+  }
+}

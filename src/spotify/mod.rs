@@ -43,6 +43,8 @@ extern {
   pub fn sp_session_player_load(session: *const SpSession,
                                 track: *const SpTrack) -> SpError;
 
+  pub fn sp_session_player_unload(session: *const SpSession);
+
   pub fn sp_session_player_play(session: *const SpSession,
                                 play: bool) -> SpError;
 

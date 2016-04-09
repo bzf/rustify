@@ -63,6 +63,14 @@ extern fn on_log_message(_: *mut SpSession,
 }
 
 extern fn on_end_of_track(session: *mut SpSession) {
+  unsafe { spotify::sp_session_player_unload(session) };
+
+  let userdata: *const spotify::CallbackHelper = unsafe {
+    spotify::sp_session_userdata(session) as *const spotify::CallbackHelper
+  };
+  let cb_helper: &spotify::CallbackHelper = unsafe { &*userdata };
+  cb_helper.player.lock().unwrap().reset();
+
   send_event(session, SpSessionCallback::EndOfTrack);
 }
 
