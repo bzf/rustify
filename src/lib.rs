@@ -117,7 +117,7 @@ impl Session {
     return true;
   }
 
-  pub fn login(&mut self, username: &String, password: &String) {
+  pub fn login(&mut self, username: &str, password: &str) {
     let c_username = ffi::CString::new(username.as_bytes()).unwrap();
     let c_password = ffi::CString::new(password.as_bytes()).unwrap();
 

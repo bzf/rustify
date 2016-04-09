@@ -15,10 +15,6 @@ fn main() {
     return;
   }
 
-  let username = args[1].to_string();
-  let password = args[2].to_string();
-
-
   // Use OpenAL for playback
   let openal_player = rustify::OpenALPlayer::new();
   let player = Arc::new(Mutex::new(openal_player));
@@ -31,11 +27,9 @@ fn main() {
     player,
   );
 
-  session.login(&username, &password);
+  session.login(&args[1], &args[2]);
 
-  let track = rustify::Link::new(
-    String::from("spotify:track:79ORARO8rXmk1ap0sfMPyC")
-  );
+  let track = rustify::Link::new("spotify:track:79ORARO8rXmk1ap0sfMPyC");
 
   match track {
     rustify::Link::TrackLink(track) => {

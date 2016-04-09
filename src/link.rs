@@ -7,7 +7,7 @@ pub enum Link {
 }
 
 impl Link {
-  pub fn new(link: String) -> Link {
+  pub fn new(link: &str) -> Link {
     let link_ptr = unsafe { spotify::sp_link_create_from_string(link.as_ptr() as *const i8) };
 
     if link_ptr.is_null() {
