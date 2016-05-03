@@ -33,6 +33,10 @@ extern {
 
   pub fn sp_playlist_name(playlist: *const SpPlaylist) -> *const libc::c_char;
 
+  pub fn sp_artist_name(artist: *const SpArtist) -> *const libc::c_char;
+
+  pub fn sp_artist_is_loaded(artist: *const SpArtist) -> bool;
+
   pub fn sp_playlist_is_loaded(playlist: *const SpPlaylist) -> bool;
 
   pub fn sp_track_is_loaded(track: *const SpTrack) -> bool;
@@ -53,4 +57,8 @@ extern {
   pub fn sp_track_name(track: *const SpTrack) -> *const libc::c_char;
 
   pub fn sp_session_userdata(session: *const SpSession) -> *mut libc::c_void;
+
+  pub fn sp_track_num_artists(track: *const SpTrack) -> i32;
+
+  pub fn sp_track_artist(track: *const SpTrack, index: i32) -> *const SpArtist;
 }

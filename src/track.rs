@@ -1,5 +1,6 @@
 use std;
 use spotify;
+use artist::Artist;
 
 pub struct Track {
   ptr: *const spotify::SpTrack,
@@ -11,7 +12,28 @@ impl Track {
   }
 
   pub fn ptr(&self) -> *const spotify::SpTrack {
+    self.wait_until_loaded();
+
     return self.ptr;
+  }
+
+  pub fn artists(&self) -> Vec<Artist> {
+    self.wait_until_loaded();
+
+    let mut vector = Vec::new();
+    let number_of_artists = unsafe {
+      spotify::sp_track_num_artists(self.ptr)
+    };
+
+    for i in 0..number_of_artists {
+      let ptr = unsafe {
+        spotify::sp_track_artist(self.ptr, i)
+      };
+
+      vector.push(Artist::new(ptr));
+    }
+
+    return vector;
   }
 
   pub fn name(&self) -> String {
