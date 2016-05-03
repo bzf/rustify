@@ -28,6 +28,8 @@ extern {
 
   pub fn sp_playlistcontainer_is_loaded(container: *const SpPlaylistContainer) -> bool;
 
+  pub fn sp_playlistcontainer_playlist_type(container: *const SpPlaylistContainer, index: i32) -> SpPlaylistType;
+
   pub fn sp_playlistcontainer_playlist(container: *const SpPlaylistContainer,
                                        index: i32) -> *const SpPlaylist;
 

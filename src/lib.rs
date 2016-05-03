@@ -15,10 +15,12 @@ mod player;
 mod link;
 mod track;
 mod playlist;
+mod artist;
 
 pub use self::player::{OpenALPlayer};
 pub use self::link::Link;
 pub use self::track::Track;
+pub use self::artist::Artist;
 pub use self::playlist::Playlist;
 
 mod spotify;
@@ -99,12 +101,38 @@ impl Session {
       spotify::sp_playlistcontainer_num_playlists(container)
     };
 
+    let playlist_type = unsafe {
+      spotify::sp_playlistcontainer_playlist_type(container, index)
+    };
+
     if index >= number_of_playlists {
       return None;
     }
 
-    let playlist_ptr = unsafe { spotify::sp_playlistcontainer_playlist(container, index) };
-    return Some(Playlist::new(playlist_ptr));
+    return match playlist_type {
+      spotify::SpPlaylistType::SpPlaylistTypePlaylist => {
+        let playlist_ptr = unsafe { spotify::sp_playlistcontainer_playlist(container, index) };
+        Some(Playlist::new(playlist_ptr))
+      },
+      _ => None,
+    };
+  }
+
+  pub fn playlists(&self) -> Vec<Playlist> {
+    let mut playlists = Vec::new();
+
+    let number_of_playlists = unsafe {
+      spotify::sp_playlistcontainer_num_playlists(self.playlist_container())
+    };
+
+    for i in 0..number_of_playlists {
+      match self.playlist(i) {
+        Some(playlist) => playlists.push(playlist),
+        None => { },
+      }
+    }
+
+    return playlists;
   }
 
   pub fn play_track(&self, track: &Track) -> bool {
@@ -124,11 +152,9 @@ impl Session {
     unsafe { spotify::sp_session_login(self.session.0,
                                        c_username.as_ptr(),
                                        c_password.as_ptr(),
-                                       false,
+                                       true,
                                        std::ptr::null());
     };
-
-    thread::sleep(Duration::from_millis(2000));
   }
 
   fn start_channel_thread(&mut self,
