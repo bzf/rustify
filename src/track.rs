@@ -36,6 +36,14 @@ impl Track {
     return vector;
   }
 
+  pub fn duration(&self) -> std::time::Duration {
+    self.wait_until_loaded();
+
+    let duration = unsafe { spotify::sp_track_duration(self.ptr) };
+
+    return std::time::Duration::from_millis(duration as u64);
+  }
+
   pub fn name(&self) -> String {
     self.wait_until_loaded();
 

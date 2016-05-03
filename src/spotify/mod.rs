@@ -61,4 +61,6 @@ extern {
   pub fn sp_track_num_artists(track: *const SpTrack) -> i32;
 
   pub fn sp_track_artist(track: *const SpTrack, index: i32) -> *const SpArtist;
+
+  pub fn sp_track_duration(track: *const SpTrack) -> i32;
 }
