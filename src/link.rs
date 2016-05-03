@@ -1,3 +1,7 @@
+extern crate libc;
+
+use std;
+
 use spotify;
 use track::{Track};
 
@@ -8,7 +12,9 @@ pub enum Link {
 
 impl Link {
   pub fn new(link: &str) -> Link {
-    let link_ptr = unsafe { spotify::sp_link_create_from_string(link.as_ptr() as *const i8) };
+    let copy = std::ffi::CString::new(link).unwrap();
+    let c_ptr = copy.into_raw();
+    let link_ptr = unsafe { spotify::sp_link_create_from_string(c_ptr as *const libc::c_char) };
 
     if link_ptr.is_null() {
       return Link::Invalid;
