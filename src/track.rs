@@ -1,4 +1,5 @@
 use std;
+use std::fmt;
 use spotify;
 use artist::Artist;
 
@@ -48,11 +49,11 @@ impl Track {
     self.wait_until_loaded();
 
     let name = unsafe {
-      std::ffi::CString::from_raw(spotify::sp_track_name(self.ptr) as *mut i8)
+      std::ffi::CStr::from_ptr(spotify::sp_track_name(self.ptr) as *mut i8)
     };
 
-    return match std::ffi::CString::into_string(name) {
-      Ok(name) => name,
+    return match name.to_str() {
+      Ok(name) => String::from(name),
       Err(_) => String::from("Loading..."),
     }
   }
@@ -62,5 +63,11 @@ impl Track {
       if unsafe { spotify::sp_track_is_loaded(self.ptr) } { break; }
       std::thread::sleep(std::time::Duration::from_millis(100));
     }
+  }
+}
+
+impl std::fmt::Display for Track {
+  fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    write!(f, "{}", self.name())
   }
 }
