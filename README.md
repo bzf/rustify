@@ -1,8 +1,9 @@
-# rustify
+rustify
+-------
 
-### A library for using the `libspotify` API in Rust.
+*A library for using the `libspotify` API in Rust.*
 
-[![Build Status](https://travis-ci.org/bzf/rustify.svg?branch=master)](https://travis-ci.org/bzf/rustify)
+[![CircleCI](https://circleci.com/gh/bzf/rustify.svg?style=svg)](https://circleci.com/gh/bzf/rustify)
 
 ## Building
 ```sh
