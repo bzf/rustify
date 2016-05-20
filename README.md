@@ -1,11 +1,13 @@
 rustify
 -------
 
-*A library for using the `libspotify` API in Rust.*
+A library for using the `libspotify` API in Rust.
 
 [![CircleCI](https://circleci.com/gh/bzf/rustify.svg?style=svg)](https://circleci.com/gh/bzf/rustify)
 
 ## Building
+*We are currently only building `rustify` against `nightly`.*
+
 ```sh
 $ cargo build
 ```
