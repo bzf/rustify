@@ -8,6 +8,10 @@ pub trait MusicPlayer: Sync + Send {
   fn handle_music_delivery(&mut self, &Vec<i32>) -> i32;
 
   fn reset(&mut self);
+
+  fn is_playing(&self) -> bool;
+
+  fn play(&self, should_play: bool);
 }
 
 pub struct CallbackHelper {

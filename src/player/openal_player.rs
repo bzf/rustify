@@ -24,10 +24,6 @@ impl OpenALPlayer {
       buffers: Vec::new(),
     }
   }
-
-  fn play(&self) {
-    self.source.play();
-  }
 }
 
 unsafe impl Send for OpenALPlayer { }
@@ -56,7 +52,7 @@ impl spotify::MusicPlayer for OpenALPlayer {
     }
 
     if !self.source.is_playing() {
-      self.play();
+      self.play(true);
     }
 
     return (frames.len() * 2) as i32;
@@ -65,5 +61,17 @@ impl spotify::MusicPlayer for OpenALPlayer {
   fn reset(&mut self) {
     self.source = al::Source::gen();
     self.buffers = Vec::new();
+  }
+
+  fn is_playing(&self) -> bool {
+    return self.source.is_playing();
+  }
+
+  fn play(&self, should_play: bool) {
+    if should_play {
+      self.source.play();
+    } else {
+      self.source.stop();
+    }
   }
 }

@@ -157,6 +157,21 @@ impl Session {
     };
   }
 
+  pub fn toggle_playback(&self, should_play: bool) {
+    let callback_helper: &spotify::CallbackHelper = unsafe { &*self.callback_helper };
+    let ref player = callback_helper.player;
+
+    unsafe { spotify::sp_session_player_play(self.session.0, should_play) };
+    player.lock().unwrap().play(should_play);
+  }
+
+  pub fn is_playing(&self) -> bool {
+    let callback_helper: &spotify::CallbackHelper = unsafe { &*self.callback_helper };
+    let ref player = callback_helper.player;
+
+    return player.lock().unwrap().is_playing();
+  }
+
   fn start_channel_thread(&mut self,
                           receiver: Receiver<spotify::SpSessionCallback>,
                           sender: Sender<Event>) {
