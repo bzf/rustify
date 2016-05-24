@@ -136,12 +136,8 @@ impl Session {
   }
 
   pub fn play_track(&self, track: &Track) -> bool {
-    // sp_error sp_session_player_load(sp_session *session, sp_track *track)
     unsafe { spotify::sp_session_player_load(self.session.0, track.ptr()) };
-
-    // sp_error sp_session_player_play(sp_session *session, bool play)
     unsafe { spotify::sp_session_player_play(self.session.0, true) };
-
     return true;
   }
 

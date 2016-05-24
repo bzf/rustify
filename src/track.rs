@@ -9,6 +9,7 @@ pub struct Track {
 
 impl Track {
   pub fn new(ptr: *const spotify::SpTrack) -> Track {
+    unsafe { spotify::sp_track_add_ref(ptr) };
     return Track { ptr: ptr };
   }
 
@@ -69,5 +70,18 @@ impl Track {
 impl std::fmt::Display for Track {
   fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
     write!(f, "{}", self.name())
+  }
+}
+
+impl Clone for Track {
+  fn clone(&self) -> Self {
+    unsafe { spotify::sp_track_add_ref(self.ptr) };
+    return Track::new(self.ptr);
+  }
+}
+
+impl Drop for Track {
+  fn drop(&mut self) {
+    unsafe { spotify::sp_track_release(self.ptr) };
   }
 }

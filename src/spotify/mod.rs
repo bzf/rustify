@@ -46,6 +46,10 @@ extern {
   pub fn sp_playlist_track(playlist: *const SpPlaylist,
                            index: i32) -> *const SpTrack;
 
+  pub fn sp_playlist_add_ref(playlist: *const SpPlaylist) -> SpError;
+
+  pub fn sp_playlist_release(playlist: *const SpPlaylist) -> SpError;
+
   pub fn sp_session_player_load(session: *const SpSession,
                                 track: *const SpTrack) -> SpError;
 
@@ -65,4 +69,8 @@ extern {
   pub fn sp_track_artist(track: *const SpTrack, index: i32) -> *const SpArtist;
 
   pub fn sp_track_duration(track: *const SpTrack) -> i32;
+
+  pub fn sp_track_add_ref(sp_track: *const SpTrack) -> SpError;
+
+  pub fn sp_track_release(sp_track: *const SpTrack) -> SpError;
 }

@@ -8,13 +8,14 @@ pub struct Playlist {
 }
 
 impl Playlist {
-  pub fn new(playlist_ptr: *const spotify::SpPlaylist) -> Playlist {
+  pub fn new(ptr: *const spotify::SpPlaylist) -> Playlist {
     loop {
-      if unsafe { spotify::sp_playlist_is_loaded(playlist_ptr) } { break; }
+      if unsafe { spotify::sp_playlist_is_loaded(ptr) } { break; }
       std::thread::sleep(std::time::Duration::from_millis(100));
     }
 
-    return Playlist { ptr: playlist_ptr };
+    unsafe { spotify::sp_playlist_add_ref(ptr) };
+    return Playlist { ptr: ptr };
   }
 
   pub fn ptr(&self) -> *const spotify::SpPlaylist {
@@ -73,5 +74,17 @@ impl Playlist {
 impl std::fmt::Display for Playlist {
   fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
     write!(f, "{}", self.name())
+  }
+}
+
+impl Clone for Playlist {
+  fn clone(&self) -> Self {
+    return Playlist::new(self.ptr);
+  }
+}
+
+impl Drop for Playlist {
+  fn drop(&mut self) {
+    unsafe { spotify::sp_playlist_release(self.ptr) };
   }
 }
