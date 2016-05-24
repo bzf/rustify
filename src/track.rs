@@ -71,3 +71,16 @@ impl std::fmt::Display for Track {
     write!(f, "{}", self.name())
   }
 }
+
+impl Clone for Track {
+  fn clone(&self) -> Self {
+    unsafe { spotify::sp_track_add_ref(self.ptr) };
+    return Track { ptr: self.ptr };
+  }
+}
+
+impl Drop for Track {
+  fn drop(&mut self) {
+    unsafe { spotify::sp_track_release(self.ptr) };
+  }
+}
