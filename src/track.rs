@@ -69,7 +69,8 @@ impl Track {
 
 impl std::fmt::Display for Track {
   fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-    write!(f, "{}", self.name())
+    let names: Vec<String> = self.artists().iter().map(|x| x.name()).collect();
+    write!(f, "{} - {}", self.name(), names.join(", ").clone())
   }
 }
 
