@@ -4,8 +4,28 @@ mod types;
 mod callbacks;
 mod links;
 
-pub use spotify::types::{CallbackHelper, MusicPlayer, SpSessionConfig, SpSession, SpError, SpAudioBufferFormat, SpAudioformat, SpSessionCallback, SpPlaylist, SpPlaylistContainer, SpTrack, SpPlaylistType, SpConnectionState, SpArtist, SpAlbum, SpAlbumbrowse};
-pub use spotify::callbacks::{SpSessionCallbacks};
+pub use spotify::types::{
+  CallbackHelper,
+  MusicPlayer,
+  SpSessionConfig,
+  SpSession,
+  SpSearch,
+  SpSearchType,
+  SpError,
+  SpAudioBufferFormat,
+  SpAudioformat,
+  SpSessionCallback,
+  SpPlaylist,
+  SpPlaylistContainer,
+  SpTrack,
+  SpPlaylistType,
+  SpConnectionState,
+  SpArtist,
+  SpAlbum,
+  SpAlbumbrowse,
+};
+
+pub use spotify::callbacks::{SpSessionCallbacks, on_search_completed};
 pub use spotify::links::{SpLink, SpLinkType, sp_link_create_from_string, sp_link_type, sp_link_as_track};
 
 #[link(name = "spotify")]
@@ -73,4 +93,28 @@ extern {
   pub fn sp_track_add_ref(sp_track: *const SpTrack) -> SpError;
 
   pub fn sp_track_release(sp_track: *const SpTrack) -> SpError;
+
+  pub fn sp_search_create(session: *const SpSession,
+                          query: *const libc::c_char,
+                          track_offset: i32,
+                          track_count: i32,
+                          album_offset: i32,
+                          album_count: i32,
+                          artist_offset: i32,
+                          artist_count: i32,
+                          playlist_offset: i32,
+                          playlist_count: i32,
+                          search_type: SpSearchType,
+                          callback: extern fn(*const SpSearch, *const libc::c_void),
+                          userdata: *const libc::c_void) -> *const SpSearch;
+
+  pub fn sp_search_is_loaded(search: *const SpSearch) -> bool;
+
+  pub fn sp_search_add_ref(search: *const SpSearch) -> SpError;
+
+  pub fn sp_search_release(search: *const SpSearch) -> SpError;
+
+  pub fn sp_search_num_tracks(search: *const SpSearch) -> i32;
+
+  pub fn sp_search_track(search: *const SpSearch, index: i32) -> *const SpTrack;
 }
