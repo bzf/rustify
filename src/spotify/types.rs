@@ -24,6 +24,17 @@ pub enum SpPlaylistContainer { }
 pub enum SpPlaylist { }
 pub enum SpTrack { }
 pub enum SpAudioformat { }
+pub enum SpSearch { }
+
+pub type SpSearchCompleteCallback = extern fn(*const SpSearch, *const libc::c_void);
+
+#[derive(Debug)]
+#[repr(C)]
+#[allow(dead_code)]
+pub enum SpSearchType {
+  SpSearchStandard,
+  SpSearchSuggest,
+}
 
 #[allow(dead_code)]
 pub enum SpArtist { }

@@ -16,12 +16,14 @@ mod link;
 mod track;
 mod playlist;
 mod artist;
+mod search;
 
 pub use self::player::{OpenALPlayer};
 pub use self::link::Link;
 pub use self::track::Track;
 pub use self::artist::Artist;
 pub use self::playlist::Playlist;
+pub use self::search::Search;
 
 mod spotify;
 pub use spotify::MusicPlayer;
@@ -93,6 +95,34 @@ impl Session {
     session.start_channel_thread(sp_receiver, rustify_sender);
 
     return (session, rustify_receiver);
+  }
+
+  pub fn search(&self, query: &str) -> Search {
+    let c_query = std::ffi::CString::new(query).unwrap();
+    let query_str = c_query.as_ptr();
+
+    let spotify_search: *const spotify::SpSearch = unsafe {
+      spotify::sp_search_create(self.session.0,
+                                query_str,
+                                0, 100, // Track
+                                0, 0, // Album
+                                0, 0, // Artist
+                                0, 0, // Playlist
+                                spotify::SpSearchType::SpSearchStandard,
+                                spotify::on_search_completed,
+                                std::ptr::null()
+                                )
+    };
+
+    loop {
+      let loaded = unsafe { spotify::sp_search_is_loaded(spotify_search) };
+
+      if loaded {
+        break;
+      }
+    }
+
+    return Search::new(spotify_search as *const spotify::SpSearch);
   }
 
   pub fn playlist(&self, index: i32) -> Option<Playlist> {

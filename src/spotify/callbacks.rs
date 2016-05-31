@@ -174,3 +174,5 @@ impl Default for SpSessionCallbacks {
     }
   }
 }
+
+pub extern fn on_search_completed(_: *const spotify::SpSearch, _: *const libc::c_void) { }
